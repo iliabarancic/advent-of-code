@@ -21,8 +21,4 @@ class Day01Test {
         sut.countIncreases(parseInputAsInt("Day01").take(30)) shouldBe 20
     }
 
-    @Test
-    fun countIncreasesFinal() {
-        println("final result: ${sut.countIncreases(parseInputAsInt("Day01"))}")
-    }
 }

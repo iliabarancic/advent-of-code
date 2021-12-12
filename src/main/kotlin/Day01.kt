@@ -9,3 +9,7 @@ class Day01 {
     }
 
 }
+
+fun main() {
+    println("final result: ${Day01().countIncreases(parseInputAsInt("Day01"))}")
+}
