@@ -4,33 +4,43 @@ class Day04 {
         val numbers = getNumbers(input)
         val bingoCards = getBingoCards(input)
         for (number in numbers) {
-            val result = openNumberAndCheckResult(number, bingoCards)
-            if (result != null) {
-                println(result)
+            val result = openNumberAndCheckResultAndRemove(number, bingoCards)
+            if (result.isNotEmpty()) {
+                println(result.first())
                 break
+            }
+        }
+    }
+
+    fun checkBingoPart2(input: List<String>) {
+        val numbers = getNumbers(input)
+        val bingoCards = getBingoCards(input)
+        for (number in numbers) {
+            val result = openNumberAndCheckResultAndRemove(number, bingoCards)
+            if (result.isNotEmpty()) {
+                println("result: ${result.last()}")
             }
         }
     }
 
     private fun getNumbers(input: List<String>) = input.first().split(",").map { it.toInt() }
 
-    private fun getBingoCards(input: List<String>): List<BingoCard> {
+    private fun getBingoCards(input: List<String>): MutableList<BingoCard> {
         val result = mutableListOf<BingoCard>()
         for (i in 2..input.size step 6) {
             val bingoField = BingoCard(input.subList(i, i + 5).map { it.split(" ").filter(String::isNotBlank).map(String::toInt) })
             result.add(bingoField)
         }
-        return result.toList()
+        return result
     }
 
-    private fun openNumberAndCheckResult(number: Int, bingoCards: List<BingoCard>): Int? {
+    private fun openNumberAndCheckResultAndRemove(number: Int, bingoCards: MutableList<BingoCard>): List<Int> {
         bingoCards.forEach { bingoCard ->
             bingoCard.open(number)
-            if (bingoCard.rowCompleted() || bingoCard.columnCompleted()) {
-                return bingoCard.calculateResult(number)
-            }
         }
-        return null
+        val winnerCards = bingoCards.filter { it.rowCompleted() || it.columnCompleted() }
+        bingoCards.removeAll(winnerCards)
+        return winnerCards.map { it.calculateResult(number) }
     }
 
     private class BingoCard(fields: List<List<Int>>) {
@@ -52,7 +62,7 @@ class Day04 {
         }
 
         fun calculateResult(lastNumber: Int): Int {
-            var resultList = if (rowCompleted()) {
+            val resultList = if (rowCompleted()) {
                 rows.toMutableList() - findCompletedRowOrColumn(rows)!!
             } else {
                 columns.toMutableList() - findCompletedRowOrColumn(columns)!!
@@ -67,5 +77,5 @@ class Day04 {
 }
 
 fun main() {
-    Day04().checkBingo(parseInput("Day04"))
+    Day04().checkBingoPart2(parseInput("Day04"))
 }
