@@ -1,54 +1,30 @@
-import Day03.RatingType.CO2
-import Day03.RatingType.OXYGEN
+import Day02.RockPaperScissors.*
 
-class Day03 {
 
-    fun calculatePowerConsumption(input: List<String>): Int {
-        val gammaRate = calculateGammaRate(input)
-        return gammaRate.toInt(2) * invertBinary(gammaRate).toInt(2)
-    }
+fun findDuplicateLetterNumber(textLine: String): Int {
+    val chars = textLine.toCharArray().toList().chunked(textLine.length / 2)
+    val single = chars.first().intersect(chars.last()).single()
+    return getCharsValue(single)
+}
 
-    fun calculateGeneratorRating(input: List<String>): Int {
-        return calculateGeneratorRating(input, OXYGEN) * calculateGeneratorRating(input, CO2)
-    }
+fun getCharsValue(char: Char) = char.code - if (char.isUpperCase()) 38 else 96
 
-    private fun calculateGammaRate(input: List<String>): String {
-        val size = input.size / 2
-        return buildString {
-            input.first().indices.forEach {
-                val currentSymbol = if (input.map { line -> line[it] }.count { it == '1' } > size) "1" else "0"
-                append(currentSymbol)
-            }
-        }
-    }
-
-    private fun calculateGeneratorRating(input: List<String>, rating: RatingType): Int {
-        val inputCopy = input.toMutableList()
-        for (index in input.first().indices) {
-            val groupBy = inputCopy.map { it[index] }.groupBy { it }
-            val mostCommon = when (rating) {
-                OXYGEN -> if (groupBy['1']!!.size >= groupBy['0']!!.size) '1' else '0'
-                CO2 -> if (groupBy['0']!!.size <= groupBy['1']!!.size) '0' else '1'
-            }
-            inputCopy.removeIf { it[index] != mostCommon }
-            if (inputCopy.size == 1) break
-        }
-        return inputCopy.single().toInt(2)
-    }
-
-    private enum class RatingType {
-        OXYGEN, CO2;
-    }
+fun findDuplicateLetterNumberFromLists(charGroup: List<String>): Int {
+    check(charGroup.size == 3)
+    return charGroup
+        .map { it.toCharArray().toSet() }
+        .reduce(Set<Char>::intersect)
+        .single()
+        .let(::getCharsValue)
 
 }
 
-private fun invertBinary(binary: String): String {
-    return buildString { binary.forEach { append(if (it == '1') "0" else "1") } }
-}
+fun findSumOfAllDuplicates(charLines: List<String>): Int = charLines.sumOf(::findDuplicateLetterNumber)
+fun findSumOfAllDuplicatesGroups(charLines: List<String>): Int = charLines.chunked(3).sumOf(::findDuplicateLetterNumberFromLists)
+
 
 
 fun main() {
-    println(Day03().calculatePowerConsumption(parseInput("Day03")))
-    println(Day03().calculateGeneratorRating(parseInput("Day03")))
-
+    println("final result: ${findSumOfAllDuplicates(parseInput("Day03"))}")
+    println("final result2: ${findSumOfAllDuplicatesGroups(parseInput("Day03"))}")
 }
