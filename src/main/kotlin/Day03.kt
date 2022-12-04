@@ -1,6 +1,3 @@
-import Day02.RockPaperScissors.*
-
-
 fun findDuplicateLetterNumber(textLine: String): Int {
     val chars = textLine.toCharArray().toList().chunked(textLine.length / 2)
     val single = chars.first().intersect(chars.last()).single()
@@ -21,7 +18,6 @@ fun findDuplicateLetterNumberFromLists(charGroup: List<String>): Int {
 
 fun findSumOfAllDuplicates(charLines: List<String>): Int = charLines.sumOf(::findDuplicateLetterNumber)
 fun findSumOfAllDuplicatesGroups(charLines: List<String>): Int = charLines.chunked(3).sumOf(::findDuplicateLetterNumberFromLists)
-
 
 
 fun main() {
